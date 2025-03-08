@@ -1,7 +1,4 @@
-import {
-  IconCircleArrowDownFilled,
-  IconCircleArrowUpFilled
-} from "@tabler/icons-react"
+import { ChevronUpIcon, ChevronDownIcon } from "lucide-react"
 import { FC } from "react"
 
 interface ChatScrollButtonsProps {
@@ -20,22 +17,32 @@ export const ChatScrollButtons: FC<ChatScrollButtonsProps> = ({
   scrollToBottom
 }) => {
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {!isAtTop && isOverflowing && (
-        <IconCircleArrowUpFilled
-          className="cursor-pointer opacity-50 hover:opacity-100"
-          size={32}
+        <button
+          className="bg-background flex size-10 items-center justify-center rounded-full shadow-md transition-all hover:opacity-80"
           onClick={scrollToTop}
-        />
+          aria-label="Scroll to top"
+        >
+          <ChevronUpIcon
+            className="hover:text-foreground/70 text-foreground"
+            size={24}
+          />
+        </button>
       )}
 
       {!isAtBottom && isOverflowing && (
-        <IconCircleArrowDownFilled
-          className="cursor-pointer opacity-50 hover:opacity-100"
-          size={32}
+        <button
+          className="bg-background flex size-10 items-center justify-center rounded-full shadow-md transition-all hover:opacity-80"
           onClick={scrollToBottom}
-        />
+          aria-label="Scroll to bottom"
+        >
+          <ChevronDownIcon
+            className="hover:text-foreground/70 text-foreground"
+            size={24}
+          />
+        </button>
       )}
-    </>
+    </div>
   )
 }
