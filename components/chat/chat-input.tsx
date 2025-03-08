@@ -31,6 +31,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
   })
 
   const [isTyping, setIsTyping] = useState<boolean>(false)
+  const [isFocused, setIsFocused] = useState(false)
 
   const {
     isAssistantPickerOpen,
@@ -79,7 +80,25 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     setTimeout(() => {
       handleFocusChatInput()
     }, 200) // FIX: hacky
-  }, [selectedPreset, selectedAssistant])
+  }, [selectedPreset, selectedAssistant, handleFocusChatInput])
+
+  // Add focus/blur event listeners to the textarea
+  useEffect(() => {
+    const textareaElement = chatInputRef.current
+
+    if (textareaElement) {
+      const handleFocus = () => setIsFocused(true)
+      const handleBlur = () => setIsFocused(false)
+
+      textareaElement.addEventListener("focus", handleFocus)
+      textareaElement.addEventListener("blur", handleBlur)
+
+      return () => {
+        textareaElement.removeEventListener("focus", handleFocus)
+        textareaElement.removeEventListener("blur", handleBlur)
+      }
+    }
+  }, [chatInputRef])
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (!isTyping && event.key === "Enter" && !event.shiftKey) {
@@ -211,7 +230,12 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
         )}
       </div>
 
-      <div className="border-input relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-xl border-2">
+      <div
+        className={cn(
+          "border-input relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-lg border",
+          isFocused && "ring-primary ring-1"
+        )}
+      >
         <div className="absolute bottom-[76px] left-0 max-h-[300px] w-full overflow-auto rounded-xl dark:border-none">
           <ChatCommandInput />
         </div>
