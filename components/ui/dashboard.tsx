@@ -1,7 +1,6 @@
 "use client"
 
 import { Sidebar } from "@/components/sidebar/sidebar"
-import { SidebarSwitcher } from "@/components/sidebar/sidebar-switcher"
 import { Button } from "@/components/ui/button"
 import { Tabs } from "@/components/ui/tabs"
 import useHotkey from "@/lib/hooks/use-hotkey"
@@ -11,8 +10,8 @@ import { IconChevronCompactRight } from "@tabler/icons-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { FC, useState } from "react"
 import { useSelectFileHandler } from "../chat/chat-hooks/use-select-file-handler"
+import { SidebarSwitcherSimple } from "../sidebar/sider-switcher-simple"
 import { CommandK } from "../utility/command-k"
-
 export const SIDEBAR_WIDTH = 350
 
 interface DashboardProps {
@@ -84,16 +83,21 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
       >
         {showSidebar && (
           <Tabs
-            className="flex h-full"
+            className="flex size-full"
             value={contentType}
             onValueChange={tabValue => {
               setContentType(tabValue as ContentType)
               router.replace(`${pathname}?tab=${tabValue}`)
             }}
           >
-            <SidebarSwitcher onContentTypeChange={setContentType} />
-
-            <Sidebar contentType={contentType} showSidebar={showSidebar} />
+            <div className="flex size-full flex-col">
+              <div className="grow">
+                <Sidebar contentType={contentType} showSidebar={showSidebar} />
+              </div>
+              <div className="shrink">
+                <SidebarSwitcherSimple />
+              </div>
+            </div>
           </Tabs>
         )}
       </div>

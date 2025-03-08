@@ -7,7 +7,8 @@ import {
 import { updateWorkspace } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { LLMID } from "@/types"
-import { IconHome, IconSettings } from "@tabler/icons-react"
+import { IconHome } from "@tabler/icons-react"
+import { CogIcon } from "lucide-react"
 import { FC, useContext, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { Button } from "../ui/button"
@@ -170,7 +171,7 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
         <WithTooltip
           display={<div>Workspace Settings</div>}
           trigger={
-            <IconSettings
+            <CogIcon
               className="ml-3 cursor-pointer pr-[5px] hover:opacity-50"
               size={32}
               onClick={() => setIsOpen(true)}
