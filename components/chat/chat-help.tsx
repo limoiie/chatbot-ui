@@ -61,8 +61,8 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
     <HoverCard open={isOpen} onOpenChange={setIsOpen}>
       <HoverCardTrigger asChild>
         <div className="hover:text-muted-foreground/100 flex cursor-pointer flex-row items-center gap-1">
-          <KeyboardIcon className="rounded-full p-0.5" size={20} />
           <span>Shortcuts</span>
+          <KeyboardIcon className="rounded-full p-0.5" size={20} />
         </div>
       </HoverCardTrigger>
 

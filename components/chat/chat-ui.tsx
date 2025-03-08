@@ -18,6 +18,7 @@ import { useScroll } from "./chat-hooks/use-scroll"
 import { ChatInput } from "./chat-input"
 import { ChatMessages } from "./chat-messages"
 import { ChatScrollButtons } from "./chat-scroll-buttons"
+import { ChatSettingsSimple } from "./chat-settings-simple"
 
 interface ChatUIProps {}
 
@@ -389,7 +390,10 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
               fontSize: "12px"
             }}
           >
-            <div className="pl-1">Model: {selectedChat?.model}</div>
+            <div className="flex items-center space-x-1 pl-1">
+              <span className="font-semibold">Model:</span>
+              <ChatSettingsSimple />
+            </div>
             <div className="ml-auto pr-1">
               <ChatHelp />
             </div>
