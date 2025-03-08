@@ -11,16 +11,36 @@ import {
   IconFileTypePdf,
   IconFileTypeTxt,
   IconJson,
-  IconLoader2,
-  IconMarkdown,
-  IconX
+  IconMarkdown
 } from "@tabler/icons-react"
+import { CircleXIcon, LoaderIcon } from "lucide-react"
 import Image from "next/image"
 import { FC, useContext, useState } from "react"
-import { Button } from "../ui/button"
 import { FilePreview } from "../ui/file-preview"
 import { WithTooltip } from "../ui/with-tooltip"
-import { ChatRetrievalSettings } from "./chat-retrieval-settings"
+
+// Custom scrollbar styles
+const scrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 3px;
+  }
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+  }
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #6b7280;
+  }
+`
 
 interface ChatFilesDisplayProps {}
 
@@ -46,6 +66,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
   const [selectedFile, setSelectedFile] = useState<ChatFile | null>(null)
   const [selectedImage, setSelectedImage] = useState<MessageImage | null>(null)
   const [showPreview, setShowPreview] = useState(false)
+  const [hoveredFileId, setHoveredFileId] = useState<string | null>(null)
 
   const messageImages = [
     ...newMessageImages.filter(
@@ -72,54 +93,61 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
     window.open(link, "_blank")
   }
 
-  return showFilesDisplay && combinedMessageFiles.length > 0 ? (
-    <>
-      {showPreview && selectedImage && (
-        <FilePreview
-          type="image"
-          item={selectedImage}
-          isOpen={showPreview}
-          onOpenChange={(isOpen: boolean) => {
-            setShowPreview(isOpen)
-            setSelectedImage(null)
-          }}
-        />
-      )}
+  const renderCloseButton = (
+    file: ChatFile | MessageImage,
+    onClick: (e: React.MouseEvent<SVGSVGElement>) => void
+  ) => {
+    return (
+      <CircleXIcon
+        className="absolute right-[6px] top-[6px] size-5 cursor-pointer rounded-full bg-white text-gray-500 hover:bg-red-50 hover:text-red-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+        onClick={onClick}
+        size={16}
+      />
+    )
+  }
 
-      {showPreview && selectedFile && (
-        <FilePreview
-          type="file"
-          item={selectedFile}
-          isOpen={showPreview}
-          onOpenChange={(isOpen: boolean) => {
-            setShowPreview(isOpen)
-            setSelectedFile(null)
-          }}
-        />
-      )}
+  return (
+    showFilesDisplay && (
+      <>
+        {showPreview && selectedImage && (
+          <FilePreview
+            type="image"
+            item={selectedImage}
+            isOpen={showPreview}
+            onOpenChange={(isOpen: boolean) => {
+              setShowPreview(isOpen)
+              setSelectedImage(null)
+            }}
+          />
+        )}
 
-      <div className="space-y-2">
-        <div className="flex w-full items-center justify-center">
-          <Button
-            className="flex h-[32px] w-[140px] space-x-2"
-            onClick={() => setShowFilesDisplay(false)}
+        {showPreview && selectedFile && (
+          <FilePreview
+            type="file"
+            item={selectedFile}
+            isOpen={showPreview}
+            onOpenChange={(isOpen: boolean) => {
+              setShowPreview(isOpen)
+              setSelectedFile(null)
+            }}
+          />
+        )}
+
+        <div className="w-full min-w-[300px] max-w-[800px] overflow-hidden pr-4 sm:w-[600px] md:w-[700px] lg:w-[700px] xl:w-[800px]">
+          <style jsx>{scrollbarStyles}</style>
+          <div
+            className="custom-scrollbar flex flex-nowrap gap-2 overflow-x-auto py-2"
+            style={{
+              scrollbarWidth: "thin",
+              msOverflowStyle: "none"
+            }}
           >
-            <RetrievalToggle />
-
-            <div>Hide files</div>
-
-            <div onClick={e => e.stopPropagation()}>
-              <ChatRetrievalSettings />
-            </div>
-          </Button>
-        </div>
-
-        <div className="overflow-auto">
-          <div className="flex gap-2 overflow-auto pt-2">
             {messageImages.map((image, index) => (
               <div
                 key={index}
                 className="relative flex h-[64px] cursor-pointer items-center space-x-4 rounded-xl hover:opacity-50"
+                onMouseEnter={() => setHoveredFileId(image.messageId)}
+                onMouseLeave={() => setHoveredFileId(null)}
               >
                 <Image
                   className="rounded"
@@ -140,9 +168,8 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                   }}
                 />
 
-                <IconX
-                  className="bg-muted-foreground border-primary absolute right-[-6px] top-[-2px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px] hover:border-red-500 hover:bg-white hover:text-red-500"
-                  onClick={e => {
+                {hoveredFileId === image.messageId &&
+                  renderCloseButton(image, e => {
                     e.stopPropagation()
                     setNewMessageImages(
                       newMessageImages.filter(
@@ -152,8 +179,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                     setChatImages(
                       chatImages.filter(f => f.messageId !== image.messageId)
                     )
-                  }}
-                />
+                  })}
               </div>
             ))}
 
@@ -161,13 +187,17 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
               file.id === "loading" ? (
                 <div
                   key={index}
-                  className="relative flex h-[64px] items-center space-x-4 rounded-xl border-2 px-4 py-3"
+                  className="relative flex items-center space-x-4 rounded-xl border-2 p-3"
                 >
-                  <div className="rounded bg-blue-500 p-2">
-                    <IconLoader2 className="animate-spin" />
+                  <div className="rounded bg-blue-500 p-1">
+                    <LoaderIcon
+                      className="animate-spin"
+                      color="white"
+                      size={20}
+                    />
                   </div>
 
-                  <div className="truncate text-sm">
+                  <div className="truncate" style={{ fontSize: "10px" }}>
                     <div className="truncate">{file.name}</div>
                     <div className="truncate opacity-50">{file.type}</div>
                   </div>
@@ -175,10 +205,12 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
               ) : (
                 <div
                   key={file.id}
-                  className="relative flex h-[64px] cursor-pointer items-center space-x-4 rounded-xl border-2 px-4 py-3 hover:opacity-50"
+                  className="hover:bg-opacity/60 relative flex cursor-pointer items-center space-x-4 rounded-xl bg-gray-100 p-3 dark:bg-gray-600"
                   onClick={() => getLinkAndView(file)}
+                  onMouseEnter={() => setHoveredFileId(file.id)}
+                  onMouseLeave={() => setHoveredFileId(null)}
                 >
-                  <div className="rounded bg-blue-500 p-2">
+                  <div className="rounded bg-blue-500 p-1">
                     {(() => {
                       let fileExtension = file.type.includes("/")
                         ? file.type.split("/")[1]
@@ -186,64 +218,63 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
 
                       switch (fileExtension) {
                         case "pdf":
-                          return <IconFileTypePdf />
+                          return <IconFileTypePdf color="white" size={20} />
                         case "markdown":
-                          return <IconMarkdown />
+                          return <IconMarkdown color="white" size={20} />
                         case "txt":
-                          return <IconFileTypeTxt />
+                          return <IconFileTypeTxt color="white" size={20} />
                         case "json":
-                          return <IconJson />
+                          return <IconJson color="white" size={20} />
                         case "csv":
-                          return <IconFileTypeCsv />
+                          return <IconFileTypeCsv color="white" size={20} />
                         case "docx":
-                          return <IconFileTypeDocx />
+                          return <IconFileTypeDocx color="white" size={20} />
                         default:
-                          return <IconFileFilled />
+                          return <IconFileFilled color="white" size={20} />
                       }
                     })()}
                   </div>
 
-                  <div className="truncate text-sm">
+                  <div className="truncate" style={{ fontSize: "10px" }}>
                     <div className="truncate">{file.name}</div>
+                    <div className="truncate opacity-50">{file.type}</div>
                   </div>
 
-                  <IconX
-                    className="bg-muted-foreground border-primary absolute right-[-6px] top-[-6px] flex size-5 cursor-pointer items-center justify-center rounded-full border-DEFAULT text-[10px] hover:border-red-500 hover:bg-white hover:text-red-500"
-                    onClick={e => {
+                  {hoveredFileId === file.id &&
+                    renderCloseButton(file, e => {
                       e.stopPropagation()
                       setNewMessageFiles(
                         newMessageFiles.filter(f => f.id !== file.id)
                       )
                       setChatFiles(chatFiles.filter(f => f.id !== file.id))
-                    }}
-                  />
+                    })}
                 </div>
               )
             )}
           </div>
         </div>
-      </div>
-    </>
-  ) : (
-    combinedMessageFiles.length > 0 && (
-      <div className="flex w-full items-center justify-center space-x-2">
-        <Button
-          className="flex h-[32px] w-[140px] space-x-2"
-          onClick={() => setShowFilesDisplay(true)}
-        >
-          <RetrievalToggle />
+      </>
+      // ) : (
+      //   combinedMessageFiles.length > 0 && (
+      //     <div className="flex w-full items-center justify-center space-x-2">
+      //       <Button
+      //         className="flex h-[32px] w-[140px] space-x-2"
+      //         onClick={() => setShowFilesDisplay(true)}
+      //       >
+      //         <RetrievalToggle />
 
-          <div>
-            {" "}
-            View {combinedMessageFiles.length} file
-            {combinedMessageFiles.length > 1 ? "s" : ""}
-          </div>
+      //         <div>
+      //           {" "}
+      //           View {combinedMessageFiles.length} file
+      //           {combinedMessageFiles.length > 1 ? "s" : ""}
+      //         </div>
 
-          <div onClick={e => e.stopPropagation()}>
-            <ChatRetrievalSettings />
-          </div>
-        </Button>
-      </div>
+      //         <div onClick={e => e.stopPropagation()}>
+      //           <ChatRetrievalSettings />
+      //         </div>
+      //       </Button>
+      //     </div>
+      //   )
     )
   )
 }
