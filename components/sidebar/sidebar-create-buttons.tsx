@@ -2,11 +2,12 @@ import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 import { ChatbotUIContext } from "@/context/context"
 import { createFolder } from "@/db/folders"
 import { ContentType } from "@/types"
-import { IconFolderPlus, IconPlus } from "@tabler/icons-react"
+import { IconFolderPlus, IconPlus, IconFolderUp } from "@tabler/icons-react"
 import { FC, useContext, useState } from "react"
 import { Button } from "../ui/button"
 import { CreateAssistant } from "./items/assistants/create-assistant"
 import { CreateCollection } from "./items/collections/create-collection"
+import { ImportCollection } from "./items/collections/import-collection"
 import { CreateFile } from "./items/files/create-file"
 import { CreateModel } from "./items/models/create-model"
 import { CreatePreset } from "./items/presets/create-preset"
@@ -30,6 +31,7 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   const [isCreatingPreset, setIsCreatingPreset] = useState(false)
   const [isCreatingFile, setIsCreatingFile] = useState(false)
   const [isCreatingCollection, setIsCreatingCollection] = useState(false)
+  const [isImportingCollection, setIsImportingCollection] = useState(false)
   const [isCreatingAssistant, setIsCreatingAssistant] = useState(false)
   const [isCreatingTool, setIsCreatingTool] = useState(false)
   const [isCreatingModel, setIsCreatingModel] = useState(false)
@@ -110,6 +112,15 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
         </Button>
       )}
 
+      {contentType === "collections" && (
+        <Button
+          className="size-[36px] p-1"
+          onClick={() => setIsImportingCollection(true)}
+        >
+          <IconFolderUp size={20} />
+        </Button>
+      )}
+
       {isCreatingPrompt && (
         <CreatePrompt
           isOpen={isCreatingPrompt}
@@ -132,6 +143,13 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
         <CreateCollection
           isOpen={isCreatingCollection}
           onOpenChange={setIsCreatingCollection}
+        />
+      )}
+
+      {isImportingCollection && (
+        <ImportCollection
+          isOpen={isImportingCollection}
+          onOpenChange={setIsImportingCollection}
         />
       )}
 
