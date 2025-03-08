@@ -1,13 +1,14 @@
 import { cn } from "@/lib/utils"
-import mistral from "@/public/providers/mistral.png"
 import groq from "@/public/providers/groq.png"
+import mistral from "@/public/providers/mistral.png"
 import perplexity from "@/public/providers/perplexity.png"
 import { ModelProvider } from "@/types"
-import { IconSparkles } from "@tabler/icons-react"
+import { SparklesIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import { FC, HTMLAttributes } from "react"
 import { AnthropicSVG } from "../icons/anthropic-svg"
+import { DeepSeekSVG } from "../icons/deepseek-svg"
 import { GoogleSVG } from "../icons/google-svg"
 import { OpenAISVG } from "../icons/openai-svg"
 
@@ -101,7 +102,18 @@ export const ModelIcon: FC<ModelIconProps> = ({
           height={height}
         />
       )
+    case "deepseek":
+      return (
+        <DeepSeekSVG
+          className={cn(
+            "rounded-sm p-1",
+            theme === "dark" ? "bg-white" : "border-DEFAULT border-black"
+          )}
+          width={width}
+          height={height}
+        />
+      )
     default:
-      return <IconSparkles size={width} />
+      return <SparklesIcon size={width} />
   }
 }

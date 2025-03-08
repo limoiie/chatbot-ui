@@ -7,6 +7,7 @@ export type LLMID =
   | MistralLLMID
   | GroqLLMID
   | PerplexityLLMID
+  | DeepSeekLLMID
 
 // OpenAI Models (UPDATED 5/13/24)
 export type OpenAILLMID =
@@ -60,6 +61,18 @@ export type PerplexityLLMID =
   | "sonar-small-online" // Sonar Small Online
   | "sonar-medium-chat" // Sonar Medium Chat
   | "sonar-medium-online" // Sonar Medium Online
+
+// DeepSeek Models
+export type DeepSeekLLMID =
+  | "deepseek-llm" // DeepSeek LLM
+  | "deepseek-coder" // DeepSeek Coder
+  | "deepseek-coder-v2" // DeepSeek Coder V2
+  | "deepseek-v2" // DeepSeek V2
+  | "deepseek-v2.5" // DeepSeek V2.5
+  | "deepseek-v3" // DeepSeek V3
+  | "deepseek-r1" // DeepSeek R1
+  | "deepseek-chat" // DeepSeek Chat, currently is the same as deepseek-v3
+  | "deepseek-reasoner" // DeepSeek Reasoner, currently is the same as deepseek-r1
 
 export interface LLM {
   modelId: LLMID

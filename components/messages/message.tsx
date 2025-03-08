@@ -5,12 +5,10 @@ import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
 import { LLM, LLMID, MessageImage, ModelProvider } from "@/types"
 import {
-  IconBolt,
   IconCaretDownFilled,
   IconCaretRightFilled,
   IconCircleFilled,
   IconFileText,
-  IconMoodSmile,
   IconPencil
 } from "@tabler/icons-react"
 import Image from "next/image"
@@ -23,6 +21,7 @@ import { TextareaAutosize } from "../ui/textarea-autosize"
 import { WithTooltip } from "../ui/with-tooltip"
 import { MessageActions } from "./message-actions"
 import { MessageMarkdown } from "./message-markdown"
+import { BoltIcon, SmileIcon } from "lucide-react"
 
 const ICON_SIZE = 32
 
@@ -230,11 +229,17 @@ export const Message: FC<MessageProps> = ({
                   <WithTooltip
                     display={<div>{MODEL_DATA?.modelName}</div>}
                     trigger={
-                      <ModelIcon
-                        provider={modelDetails?.provider || "custom"}
-                        height={ICON_SIZE}
-                        width={ICON_SIZE}
-                      />
+                      <div className="flex items-center space-x-2 rounded border border-DEFAULT bg-white dark:bg-black">
+                        <ModelIcon
+                          provider={
+                            MODEL_DATA?.modelId.includes("deepseek")
+                              ? "deepseek"
+                              : MODEL_DATA?.provider || "custom"
+                          }
+                          height={ICON_SIZE}
+                          width={ICON_SIZE}
+                        />
+                      </div>
                     }
                   />
                 )
@@ -247,7 +252,7 @@ export const Message: FC<MessageProps> = ({
                   alt="user image"
                 />
               ) : (
-                <IconMoodSmile
+                <SmileIcon
                   className="bg-primary text-secondary border-primary rounded border-DEFAULT p-1"
                   size={ICON_SIZE}
                 />
@@ -288,7 +293,7 @@ export const Message: FC<MessageProps> = ({
                   default:
                     return (
                       <div className="flex animate-pulse items-center space-x-2">
-                        <IconBolt size={20} />
+                        <BoltIcon size={20} />
 
                         <div>Using {toolInUse}...</div>
                       </div>
