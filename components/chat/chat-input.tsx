@@ -77,12 +77,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    setTimeout(() => {
-      handleFocusChatInput()
-    }, 200) // FIX: hacky
-  }, [selectedPreset, selectedAssistant, handleFocusChatInput])
-
   // Add focus/blur event listeners to the textarea
   useEffect(() => {
     const textareaElement = chatInputRef.current

@@ -11,6 +11,7 @@ import { useParams, useRouter } from "next/navigation"
 import { FC, useContext, useRef } from "react"
 import { DeleteChat } from "./delete-chat"
 import { UpdateChat } from "./update-chat"
+import { MessageCircleMoreIcon } from "lucide-react"
 
 interface ChatItemProps {
   chat: Tables<"chats">
@@ -64,7 +65,7 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
       onKeyDown={handleKeyDown}
       onClick={handleClick}
     >
-      {chat.assistant_id ? (
+      {/* {chat.assistant_id ? (
         assistantImage ? (
           <Image
             style={{ width: "30px", height: "30px" }}
@@ -88,11 +89,9 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
             <ModelIcon provider={MODEL_DATA?.provider} height={30} width={30} />
           }
         />
-      )}
+      )} */}
 
-      <div className="ml-3 flex-1 truncate text-sm font-semibold">
-        {chat.name}
-      </div>
+      <div className="flex-1 truncate text-sm">💬 {chat.name}</div>
 
       <div
         onClick={e => {
